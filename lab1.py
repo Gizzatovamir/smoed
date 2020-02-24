@@ -8,7 +8,7 @@ Measurement = namedtuple("Measurement", ['density', 'elastic'])
 selection_size = 96 # объём выборочной совокупности
 data_file_name = "Tabl.txt"
 sample_seed = 120 # None to random
-block_output_size = 17
+block_output_size = 17 # (c учётом, что на одну запись уходит 6 символов(с пробелом))
 
 def read_data(filename):
     # Извлекаем из файла данные и формируем генеральную совокупность.
@@ -27,8 +27,14 @@ def get_sample(gen_pop, size_of_gen_pop):
     random.setstate(prev_state)
     return sample
 
-def print_beautiful_variation(variation):
-    # Input: Counter
+def print_beautiful_sample(sample: list):
+    for i, value in enumerate(sample):
+        if i % block_output_size == 0 and i != 0:
+            print(end="\n")
+        print(value, end=" ")
+    print(end="\n")
+
+def print_beautiful_variation(variation: Counter):
     sorted_density_values = list(sorted(variation_series_density))
     for i in range(int(len(variation)/block_output_size) + 1):
         for index in range(i*block_output_size, (i+1)*block_output_size):
@@ -48,17 +54,18 @@ sample = get_sample(general_population, selection_size)
 sample_density = [pair.density for pair in sample]
 sample_elastic = [pair.elastic for pair in sample]
 
-# Ранжированный ряд (по возрастанию плотности)
-ranked_row = sorted(sample, reverse=False, key=attrgetter('density'))
+print("\nСформированная выборка:")
+print_beautiful_sample(sample_density)
+
+# ranked_row = sorted(sample, reverse=False, key=attrgetter('density'))
+ranked_row = sorted(sample_density)
+print("\nРанжированный ряд (по возрастанию): ")
+print_beautiful_sample(ranked_row)
 
 # Вариационный ряд значений плотности
 variation_series_density = Counter(sample_density)
+print("\nВариационный ряд:")
 print_beautiful_variation(variation_series_density)
-
-# print(variation_series_density)
-# for x, y in ranked_row:
-#     print(x,y)
-# print(ranked_row)
 
 # Для интервального ряда нужно оценить длину частичного интервала
 # Для этого воспользуемся формулой Стерджеса: k = 1 + 3.322*log10(n)
