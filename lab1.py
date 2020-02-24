@@ -130,3 +130,52 @@ ax.set_ylabel('Относительная частота')
 ax.set_title('Гистограмма относительных частот')
 fig.tight_layout()
 plt.show()
+
+# Эмпирическая функция распределения
+from statsmodels.distributions.empirical_distribution import ECDF
+
+fig, ax = plt.subplots()
+ecdf = ECDF(sample_density)
+ax.set_xlabel('x')
+ax.set_ylabel('F(x)')
+ax.set_title('Эмпирическая функция распределения (по выборке)')
+ax.axis(xmin=min_density-50, xmax=max(ecdf.x)+50)
+ax.axis(ymin=-0.05, ymax=1.05)
+
+for i in range(len(ecdf.x)-1):
+    xs = [min_density, ecdf.x[i]]
+    ys = [ecdf.y[i]] * 2
+    # ax.plot(xs, ys, 'r:', alpha=0.2)
+    ax.plot(ecdf.x[i], ecdf.y[i], "k.") # точки
+    xs = [ecdf.x[i], ecdf.x[i+1]]
+    ys = [ecdf.y[i]] * 2
+    ax.plot(xs, ys, 'k-')
+    ax.plot([min_density-500, ecdf.x[1]], [0, 0], 'k--', alpha=0.1)
+    ax.plot([max(ecdf.x), max(ecdf.x)+50], [1, 1], 'k--', alpha=0.1)
+ax.plot(ecdf.x[-1], ecdf.y[-1], "k.") # точки
+fig.tight_layout()
+plt.show()
+
+
+
+fig, ax = plt.subplots()
+ecdf = ECDF([sum(bucket) for bucket in buckets])
+ax.set_xlabel('x')
+ax.set_ylabel('F(x)')
+ax.set_title('Эмпирическая функция распределения (по интервальному ряду)')
+ax.axis(xmin=min_density-100, xmax=max(ecdf.x)+500)
+ax.axis(ymin=-0.05, ymax=1.05)
+
+for i in range(len(ecdf.x)-1):
+    xs = [min_density, ecdf.x[i]]
+    ys = [ecdf.y[i]] * 2
+    # ax.plot(xs, ys, 'r:', alpha=0.2)
+    ax.plot(ecdf.x[i], ecdf.y[i], "k.") # точки
+    xs = [ecdf.x[i], ecdf.x[i+1]]
+    ys = [ecdf.y[i]] * 2
+    ax.plot(xs, ys, 'k-')
+    ax.plot([min_density-1000, ecdf.x[1]], [0, 0], 'k--', alpha=0.1)
+    ax.plot([max(ecdf.x), max(ecdf.x)+1000], [1, 1], 'k--', alpha=0.1)
+ax.plot(ecdf.x[-1], ecdf.y[-1], "k.") # точки
+fig.tight_layout()
+plt.show()
