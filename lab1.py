@@ -70,43 +70,48 @@ print_beautiful_variation(variation_series_density)
 # Для интервального ряда нужно оценить длину частичного интервала
 # Для этого воспользуемся формулой Стерджеса: k = 1 + 3.322*log10(n)
 buckets_number = int(1 + 3.322 * math.log10(selection_size))
-print("Используя формулу Стерджеса рассчитаем количество групп для разбиения выборки:")
+print("\nИспользуя формулу Стерджеса рассчитаем количество групп для разбиения выборки:")
 print("1 + 3.322*lg({0}) = {1}".format(selection_size, buckets_number))
 
 min_density, max_density = min(sample_density), max(sample_density)
 range_density = max_density - min_density
-print("Минимальное значение ряда: ", min_density)
+print("\nМинимальное значение ряда: ", min_density)
 print("Максимальное значение ряда:", max_density)
 print("Размах выборки", range_density)
 
-fn = lambda x: min(int((abs(x) - min_val) / range_density * buckets_number), buckets_number-1)
-print(list(map(fn, sample_density)))
-
+isInBucket = lambda x: min(int((abs(x) - min_density) / range_density * buckets_number), buckets_number-1)
+borders = [(min_density + range_density/buckets_number*i, min_density + range_density/buckets_number*(i+1)) for i in range(buckets_number)]
 buckets = [[] for i in range(buckets_number)]
-borders = [(min_val + range_density/buckets_number*i, min_val + range_density/buckets_number*(i+1)) for i in range(buckets_number)]
-print(borders)
 for value in sample_density:
-    buckets[fn(value)].append(value)
-for num, bucket in enumerate(buckets):
-    print(num, ") ", sep="", end="")
-    print(bucket)
+    buckets[isInBucket(value)].append(value)
+print("\nИнтервальный ряд со значениями:")
+for i, border in enumerate(borders):
+    if i != len(borders)-1:
+        print("[{0:.3f} - {1:.3f}):".format(border[0], border[1]), end=" ")
+    else:
+        print("[{0:.3f} - {1:.3f}]:".format(border[0], border[1]), end=" ")
+    for elem in buckets[i]:
+        print(elem, end=" ")
+    print(end="\n")
 
-import matplotlib.pyplot as plt
-import numpy as np
+print("\nИнтервальный ряд с частотами:")
 
-fig, ax = plt.subplots()
+# import matplotlib.pyplot as plt
+# import numpy as np
 
-# the histogram of the data
-n, bins, patches = ax.hist(sample_density, buckets_number, density=False, edgecolor='black')
-print(n, bins)
+# fig, ax = plt.subplots()
 
-ax.set_xlabel('Значение плотности')
-ax.set_ylabel('Относительная частота')
-ax.set_title(r'Гистограмма плотности')
+# # the histogram of the data
+# n, bins, patches = ax.hist(sample_density, buckets_number, density=False, edgecolor='black')
+# print(n, bins)
 
-# Tweak spacing to prevent clipping of ylabel
-fig.tight_layout()
-plt.show()
+# ax.set_xlabel('Значение плотности')
+# ax.set_ylabel('Относительная частота')
+# ax.set_title(r'Гистограмма плотности')
+
+# # Tweak spacing to prevent clipping of ylabel
+# fig.tight_layout()
+# plt.show()
 
 
 
