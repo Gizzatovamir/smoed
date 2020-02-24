@@ -70,10 +70,15 @@ print_beautiful_variation(variation_series_density)
 # Для интервального ряда нужно оценить длину частичного интервала
 # Для этого воспользуемся формулой Стерджеса: k = 1 + 3.322*log10(n)
 buckets_number = int(1 + 3.322 * math.log10(selection_size))
-print(buckets_number)
-min_val, max_val = min(sample_density), max(sample_density)
-range_density = max_val - min_val
-print("Размах выборки плотности:", range_density)
+print("Используя формулу Стерджеса рассчитаем количество групп для разбиения выборки:")
+print("1 + 3.322*lg({0}) = {1}".format(selection_size, buckets_number))
+
+min_density, max_density = min(sample_density), max(sample_density)
+range_density = max_density - min_density
+print("Минимальное значение ряда: ", min_density)
+print("Максимальное значение ряда:", max_density)
+print("Размах выборки", range_density)
+
 fn = lambda x: min(int((abs(x) - min_val) / range_density * buckets_number), buckets_number-1)
 print(list(map(fn, sample_density)))
 
