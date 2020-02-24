@@ -7,7 +7,7 @@ Measurement = namedtuple("Measurement", ['density', 'elastic'])
 
 selection_size = 96 # объём выборочной совокупности
 data_file_name = "Tabl.txt"
-sample_seed = 120 # None to random
+sample_seed = 120 # None to random # Зерно для выборки, константа, чтобы всегда одинаково
 block_output_size = 17 # (c учётом, что на одну запись уходит 6 символов(с пробелом))
 
 def read_data(filename):
@@ -70,12 +70,11 @@ print_beautiful_variation(variation_series_density)
 # Для интервального ряда нужно оценить длину частичного интервала
 # Для этого воспользуемся формулой Стерджеса: k = 1 + 3.322*log10(n)
 buckets_number = int(1 + 3.322 * math.log10(selection_size))
-print("\nИспользуя формулу Стерджеса рассчитаем количество групп для разбиения выборки:")
-print("1 + 3.322*lg({0}) = {1}".format(selection_size, buckets_number))
-
 min_density, max_density = min(sample_density), max(sample_density)
 range_density = max_density - min_density
-print("\nМинимальное значение ряда: ", min_density)
+print("\nИспользуя формулу Стерджеса рассчитаем количество групп для разбиения выборки:")
+print("1 + 3.322*lg({0}) = {1}".format(selection_size, buckets_number))
+print("Минимальное значение ряда: ", min_density)
 print("Максимальное значение ряда:", max_density)
 print("Размах выборки", range_density)
 
@@ -95,6 +94,14 @@ for i, border in enumerate(borders):
     print(end="\n")
 
 print("\nИнтервальный ряд с частотами:")
+print("|       Интервал      | Абс. частота | Отн. частота |")
+for i, border in enumerate(borders):
+    if i != len(borders)-1:
+        print("| [{0:.3f} - {1:.3f}) |".format(border[0], border[1]), end=" ")
+    else:
+        print("| [{0:.3f} - {1:.3f}] |".format(border[0], border[1]), end=" ")
+    print("{0:^13.3f}| {1:^13.3f}|".format(len(buckets[i]), len(buckets[i])/selection_size))
+    # print(end="\n")  
 
 # import matplotlib.pyplot as plt
 # import numpy as np
