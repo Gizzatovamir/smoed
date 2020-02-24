@@ -101,26 +101,32 @@ for i, border in enumerate(borders):
     else:
         print("| [{0:.3f} - {1:.3f}] |".format(border[0], border[1]), end=" ")
     print("{0:^13.3f}| {1:^13.3f}|".format(len(buckets[i]), len(buckets[i])/selection_size))
-    # print(end="\n")  
-
-# import matplotlib.pyplot as plt
-# import numpy as np
-
-# fig, ax = plt.subplots()
-
-# # the histogram of the data
-# n, bins, patches = ax.hist(sample_density, buckets_number, density=False, edgecolor='black')
-# print(n, bins)
-
-# ax.set_xlabel('Значение плотности')
-# ax.set_ylabel('Относительная частота')
-# ax.set_title(r'Гистограмма плотности')
-
-# # Tweak spacing to prevent clipping of ylabel
-# fig.tight_layout()
-# plt.show()
 
 
+# --------------------------------- Рисуночки! ---------------------------------
 
-            
+import matplotlib.pyplot as plt
+import numpy as np
+from statistics import mean
+# Гистограммы
+fig, ax = plt.subplots()
+ax.hist(sample_density, bins=buckets_number, density=False, edgecolor='black', facecolor='blue')
+center_of_borders = [(border[0] + border[1])/2 for border in borders]
+y = [len(bucket) for bucket in buckets]
+ax.plot(center_of_borders, y, '--')
+ax.set_xlabel('Варианты')
+ax.set_ylabel('Абсолютная частота')
+ax.set_title('Гистограмма абсолютных частот')
+fig.tight_layout()
+plt.show()
 
+fig, ax = plt.subplots()
+ax.hist(sample_density, buckets_number, weights=np.ones(len(sample_density)) / len(sample_density), density=False, edgecolor='black', facecolor='blue')
+center_of_borders = [(border[0] + border[1])/2 for border in borders]
+y = [len(bucket)/selection_size for bucket in buckets]
+ax.plot(center_of_borders, y, '--')
+ax.set_xlabel('Варианты')
+ax.set_ylabel('Относительная частота')
+ax.set_title('Гистограмма относительных частот')
+fig.tight_layout()
+plt.show()
