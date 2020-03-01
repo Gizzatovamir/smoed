@@ -48,6 +48,39 @@ def print_beautiful_variation(variation: Counter):
             print("{0:^6}".format(variation[key]), end="")
         print()
 
+def get_interval_sample(sample):
+    buckets_number = int(1 + 3.322 * math.log10(selection_size))
+    min_density, max_density = min(sample), max(sample)
+    range_density = max_density - min_density
+    isInBucket = lambda x: min(int((abs(x) - min_density) / range_density * buckets_number), buckets_number-1)
+
+    borders = [(min_density + range_density/buckets_number*i, min_density + range_density/buckets_number*(i+1)) for i in range(buckets_number)]
+    buckets = [[] for i in range(buckets_number)]
+    for value in sample:
+        buckets[isInBucket(value)].append(value)
+    return borders, buckets
+
+def print_beautiful_interval_freq(buckets, borders):
+    print("\nИнтервальный ряд с частотами:")
+    print("|       Интервал      | Абс. частота | Отн. частота |")
+    for i, border in enumerate(borders):
+        if i != len(borders)-1:
+            print("| [{0:.3f} - {1:.3f}) |".format(border[0], border[1]), end=" ")
+        else:
+            print("| [{0:.3f} - {1:.3f}] |".format(border[0], border[1]), end=" ")
+        print("{0:^13.3f}| {1:^13.3f}|".format(len(buckets[i]), len(buckets[i])/selection_size))
+
+def print_beautiful_interval_values(buckets, borders):
+    print("\nИнтервальный ряд со значениями:")
+    for i, border in enumerate(borders):
+        if i != len(borders)-1:
+            print("[{0:.3f} - {1:.3f}):".format(border[0], border[1]), end=" ")
+        else:
+            print("[{0:.3f} - {1:.3f}]:".format(border[0], border[1]), end=" ")
+        for elem in buckets[i]:
+            print(elem, end=" ")
+        print(end="\n")
+
 if __name__ == "__main__":
     general_population = read_data(filename=data_file_name)
     sample = get_sample(general_population, selection_size)
@@ -83,25 +116,9 @@ if __name__ == "__main__":
     buckets = [[] for i in range(buckets_number)]
     for value in sample_density:
         buckets[isInBucket(value)].append(value)
-    print("\nИнтервальный ряд со значениями:")
-    for i, border in enumerate(borders):
-        if i != len(borders)-1:
-            print("[{0:.3f} - {1:.3f}):".format(border[0], border[1]), end=" ")
-        else:
-            print("[{0:.3f} - {1:.3f}]:".format(border[0], border[1]), end=" ")
-        for elem in buckets[i]:
-            print(elem, end=" ")
-        print(end="\n")
 
-    print("\nИнтервальный ряд с частотами:")
-    print("|       Интервал      | Абс. частота | Отн. частота |")
-    for i, border in enumerate(borders):
-        if i != len(borders)-1:
-            print("| [{0:.3f} - {1:.3f}) |".format(border[0], border[1]), end=" ")
-        else:
-            print("| [{0:.3f} - {1:.3f}] |".format(border[0], border[1]), end=" ")
-        print("{0:^13.3f}| {1:^13.3f}|".format(len(buckets[i]), len(buckets[i])/selection_size))
-
+    print_beautiful_interval_freq(buckets, borders)
+    print_beautiful_interval_values(buckets, borders)
 
     # --------------------------------- Рисуночки! ---------------------------------
 
