@@ -62,12 +62,12 @@ def get_interval_sample(sample):
 
 def print_beautiful_interval_freq(buckets, borders):
     print("\nИнтервальный ряд с частотами:")
-    print("|       Интервал      | Абс. частота | Отн. частота |")
+    print("| * |       Интервал      | Абс. частота | Отн. частота |")
     for i, border in enumerate(borders):
         if i != len(borders)-1:
-            print("| [{0:.3f} - {1:.3f}) |".format(border[0], border[1]), end=" ")
+            print("| {2} | [{0:.3f} - {1:.3f}) |".format(border[0], border[1], i+1), end=" ")
         else:
-            print("| [{0:.3f} - {1:.3f}] |".format(border[0], border[1]), end=" ")
+            print("| {2} | [{0:.3f} - {1:.3f}] |".format(border[0], border[1], i+1), end=" ")
         print("{0:^13.3f}| {1:^13.3f}|".format(len(buckets[i]), len(buckets[i])/selection_size))
 
 def print_beautiful_interval_values(buckets, borders):
