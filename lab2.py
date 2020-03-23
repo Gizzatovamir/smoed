@@ -2,12 +2,18 @@ import lab1
 import math
 from collections import Counter
 
-def build_table(buckets, mid_borders):
+def build_table(sample_density):
+    borders, buckets = lab1.get_interval_sample(sample_density)
+    mid_borders = [round((border[0] + border[1])/2) for border in borders]
+
+    build_table.C = mid_borders[max([(len(bucket), i) for i, bucket in enumerate(buckets)])[1]]
+    build_table.h = int((mid_borders[-1] - mid_borders[0]) / (len(mid_borders)-1))
+
     table = [[0 for i in range(8)] for i in range(len(mid_borders)+1)]
     for i, bucket in enumerate(buckets):
         xi = mid_borders[i]
         n = len(buckets[i])
-        ui = (xi - C) / h
+        ui = (xi - build_table.C) / build_table.h
         table [i][0] = xi
         table[-1][0] += xi
         table [i][1] =  n
@@ -25,6 +31,8 @@ def build_table(buckets, mid_borders):
         table [i][7] =  (ui+1) ** 4 * n
         table[-1][7] += (ui+1) ** 4 * n
     return table
+build_table.C = 0
+build_table.h = 0
 
 def check_result(table):
     lhs = table[-1][6] + 4*table[-1][5] + 6*table[-1][4] + 4*table[-1][3] + table[-1][1]
@@ -32,21 +40,45 @@ def check_result(table):
     assert lhs == rhs, "Должны совпадать!"
     print("\nПроверка:", lhs, "=", rhs, sep=" ")
 
+def get_main_values_from_table(table):
+    n = table[-1][1]
+    M1 = table[-1][3] / n
+    M2 = table[-1][4] / n
+    M3 = table[-1][5] / n
+    M4 = table[-1][6] / n
+
+    h = build_table.h # sugar
+
+    m2 = (M2 - pow(M1,2)) * pow(h,2)
+    m3 = (M3 - 3*M2*M1 + 2*pow(M1,3)) * pow(h,3)
+    m4 = (M4 - 4*M3*M1 + 6*M2*pow(M1,2) - 3*pow(M1, 4)) * pow(h,4)
+    X_cherta = M1 * build_table.h + build_table.C
+    Dv = m2
+    sigma = math.sqrt(Dv)
+    s2 = (n / (n-1)) * Dv
+    S = math.sqrt(s2)
+    As = m3 / pow(sigma, 3)
+    E = (m4 / pow(sigma, 4)) - 3
+
+    return X_cherta, S
+
+
 if __name__ == "__main__":
     general_population = lab1.read_data(filename=lab1.data_file_name)
     sample = lab1.get_sample(general_population, lab1.selection_size)
     sample_density = [pair.density for pair in sample]
 
     borders, buckets = lab1.get_interval_sample(sample_density)
-    mid_borders = [round((border[0] + border[1])/2) for border in borders]
     lab1.print_beautiful_interval_freq(buckets, borders)
+
+    mid_borders = [round((border[0] + border[1])/2) for border in borders]
     C = mid_borders[max([(len(bucket), i) for i, bucket in enumerate(buckets)])[1]]
     # h = mid_borders[1] - mid_borders[0]
     h = int((mid_borders[-1] - mid_borders[0]) / (len(mid_borders)-1)) #  вроде работает, на за счёт округление может быть шляпа
     print("C =", C)
     print("h =", h)
 
-    table = build_table(buckets, mid_borders)
+    table = build_table(sample_density)
     for row in table:
         print(row)
     check_result(table)
