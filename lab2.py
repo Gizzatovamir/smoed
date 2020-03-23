@@ -110,22 +110,22 @@ print("Оценка эксцесса", E)
 # точечные статистические оценки математического ожидания, дисперсии, среднеквадратического отклонения,
 #  асимметрии и эксцесса исследуемой случайной величины. Полученные результаты содержательно проинтерпретировать.
 
-variation_series_density = Counter(sample_density)
+# variation_series_density = Counter(sample_density)
 
 # Проосто считаем
 
-math_expectation = 0
-elems_num = 0
-for key, value in variation_series_density.items():
-    math_expectation += key * value
-    elems_num += value
-print(math_expectation, "/", elems_num)
-math_expectation /= elems_num
-print("Мат ождиание: {:.3f}".format(math_expectation))
+# math_expectation = 0
+# elems_num = 0
+# for key, value in variation_series_density.items():
+#     math_expectation += key * value
+#     elems_num += value
+# print(math_expectation, "/", elems_num)
+# math_expectation /= elems_num
+# print("Мат ождиание: {:.3f}".format(math_expectation))
 
 
-dispersion = math.sqrt(sum([pow(xi - math_expectation, 2) for xi in sample_density]) / (selection_size - 1))
-print("Дисперсия: {:.3f}".format(dispersion))
+# dispersion = math.sqrt(sum([pow(xi - math_expectation, 2) for xi in sample_density]) / (selection_size - 1))
+# print("Дисперсия: {:.3f}".format(dispersion))
 
 
 
