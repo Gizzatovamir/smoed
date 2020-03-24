@@ -37,8 +37,8 @@ build_table.h = 0
 def check_result(table):
     lhs = table[-1][6] + 4*table[-1][5] + 6*table[-1][4] + 4*table[-1][3] + table[-1][1]
     rhs = table[-1][7]
-    assert lhs == rhs, "Должны совпадать!"
     print("\nПроверка:", lhs, "=", rhs, sep=" ")
+    assert abs(lhs - rhs) < 0.0001, "Должны совпадать!"
 
 def get_main_values_from_table(table):
     n = table[-1][1]
@@ -65,10 +65,12 @@ def get_main_values_from_table(table):
 
 if __name__ == "__main__":
     general_population = lab1.read_data(filename=lab1.data_file_name)
-    sample = lab1.get_sample(general_population, lab1.selection_size)
-    sample_density = [pair.density for pair in sample]
+    # sample = lab1.get_sample(general_population, lab1.selection_size)
+    sample_density = lab1.get_sample_first(general_population, lab1.selection_size)
+    sample_elastic = lab1.get_sample_second(general_population, lab1.selection_size)
+    curr_sample = sample_elastic
 
-    borders, buckets = lab1.get_interval_sample(sample_density)
+    borders, buckets = lab1.get_interval_sample(curr_sample)
     lab1.print_beautiful_interval_freq(buckets, borders)
 
     mid_borders = [round((border[0] + border[1])/2) for border in borders]
@@ -78,9 +80,11 @@ if __name__ == "__main__":
     print("C =", C)
     print("h =", h)
 
-    table = build_table(sample_density)
+    table = build_table(curr_sample)
     for row in table:
-        print(row)
+        for number in row:
+            print("{0:.2f}".format(number), end=" ")
+        print(end="\n")
     check_result(table)
 
     n = table[-1][1]
@@ -133,22 +137,22 @@ if __name__ == "__main__":
 # точечные статистические оценки математического ожидания, дисперсии, среднеквадратического отклонения,
 #  асимметрии и эксцесса исследуемой случайной величины. Полученные результаты содержательно проинтерпретировать.
 
-# variation_series_density = Counter(sample_density)
+variation_series_density = Counter(curr_sample)
 
 # Проосто считаем
 
-# math_expectation = 0
-# elems_num = 0
-# for key, value in variation_series_density.items():
-#     math_expectation += key * value
-#     elems_num += value
-# print(math_expectation, "/", elems_num)
-# math_expectation /= elems_num
-# print("Мат ождиание: {:.3f}".format(math_expectation))
+math_expectation = 0
+elems_num = 0
+for key, value in variation_series_density.items():
+    math_expectation += key * value
+    elems_num += value
+print(math_expectation, "/", elems_num)
+math_expectation /= elems_num
+print("Мат ождиание: {:.3f}".format(math_expectation))
 
 
-# dispersion = math.sqrt(sum([pow(xi - math_expectation, 2) for xi in sample_density]) / (selection_size - 1))
-# print("Дисперсия: {:.3f}".format(dispersion))
+dispersion = math.sqrt(sum([pow(xi - math_expectation, 2) for xi in curr_sample]) / (96 - 1))
+print("Дисперсия: {:.3f}".format(dispersion))
 
 
 

@@ -7,7 +7,7 @@ Measurement = namedtuple("Measurement", ['density', 'elastic'])
 
 selection_size = 96 # объём выборочной совокупности
 data_file_name = "Tabl.txt"
-sample_seed = 120 # None to random # Зерно для выборки, константа, чтобы всегда одинаково
+sample_seed_1 = 120 # None to random # Зерно для выборки, константа, чтобы всегда одинаково
 sample_seed_2 = 721
 block_output_size = 15 # (c учётом, что на одну запись уходит 6 символов(с пробелом))
 
@@ -23,9 +23,25 @@ def read_data(filename):
 def get_sample(gen_pop, size_of_gen_pop):
     # Формируем выборку из генеральной совокупности
     prev_state = random.getstate()
-    random.seed(sample_seed)
+    random.seed(sample_seed_2)
     sample = random.sample(gen_pop, size_of_gen_pop)
     random.setstate(prev_state)
+    return sample
+
+def get_sample_first(gen_pop, size_of_gen_pop):
+    prev_state = random.getstate()
+    random.seed(sample_seed_1)
+    sample = random.sample(gen_pop, size_of_gen_pop)
+    random.setstate(prev_state)
+    sample = [elem[0] for elem in sample]
+    return sample
+
+def get_sample_second(gen_pop, size_of_gen_pop):
+    prev_state = random.getstate()
+    random.seed(sample_seed_2)
+    sample = random.sample(gen_pop, size_of_gen_pop)
+    random.setstate(prev_state)
+    sample = [elem[1] for elem in sample]
     return sample
 
 def print_beautiful_sample(sample: list):
@@ -89,22 +105,22 @@ if __name__ == "__main__":
     sample_elastic = [pair.elastic for pair in sample]
 
     print("\nСформированная выборка:")
-    print_beautiful_sample(sample_density)
+    print_beautiful_sample(sample_elastic)
 
     # ranked_row = sorted(sample, reverse=False, key=attrgetter('density'))
-    ranked_row = sorted(sample_density)
+    ranked_row = sorted(sample_elastic)
     print("\nРанжированный ряд (по возрастанию): ")
     print_beautiful_sample(ranked_row)
 
     # Вариационный ряд значений плотности
-    variation_series_density = Counter(sample_density)
+    variation_series_density = Counter(sample_elastic)
     print("\nВариационный ряд:")
     print_beautiful_variation(variation_series_density)
 
     # Для интервального ряда нужно оценить длину частичного интервала
     # Для этого воспользуемся формулой Стерджеса: k = 1 + 3.322*log10(n)
     buckets_number = int(1 + 3.322 * math.log10(selection_size))
-    min_density, max_density = min(sample_density), max(sample_density)
+    min_density, max_density = min(sample_elastic), max(sample_elastic)
     range_density = max_density - min_density
     print("\nИспользуя формулу Стерджеса рассчитаем количество групп для разбиения выборки:")
     print("1 + 3.322*lg({0}) = {1}".format(selection_size, buckets_number))
@@ -115,7 +131,7 @@ if __name__ == "__main__":
     isInBucket = lambda x: min(int((abs(x) - min_density) / range_density * buckets_number), buckets_number-1)
     borders = [(min_density + range_density/buckets_number*i, min_density + range_density/buckets_number*(i+1)) for i in range(buckets_number)]
     buckets = [[] for i in range(buckets_number)]
-    for value in sample_density:
+    for value in sample_elastic:
         buckets[isInBucket(value)].append(value)
 
     print_beautiful_interval_freq(buckets, borders)
@@ -128,8 +144,8 @@ if __name__ == "__main__":
     from statistics import mean
     # Гистограммы
     fig, ax = plt.subplots()
-    # ax.hist(sample_density, bins=buckets_number, density=False, edgecolor='black', facecolor='blue')
-    # ax.hist(sample_density, bins=buckets_number, density=False, edgecolor='black', facecolor='blue')
+    # ax.hist(sample_elastic, bins=buckets_number, density=False, edgecolor='black', facecolor='blue')
+    # ax.hist(sample_elastic, bins=buckets_number, density=False, edgecolor='black', facecolor='blue')
     y = [len(bucket) for bucket in buckets]
     center_of_borders = [(border[0] + border[1])/2 for border in borders]
     ax.plot(center_of_borders, y, '--')
@@ -151,7 +167,7 @@ if __name__ == "__main__":
     # plt.show()
 
     fig, ax = plt.subplots()
-    # ax.hist(sample_density, buckets_number, weights=np.ones(len(sample_density)) / len(sample_density), density=False, edgecolor='black', facecolor='blue')
+    # ax.hist(sample_elastic, buckets_number, weights=np.ones(len(sample_elastic)) / len(sample_elastic), density=False, edgecolor='black', facecolor='blue')
     center_of_borders = [(border[0] + border[1])/2 for border in borders]
     y = [len(bucket)/selection_size for bucket in buckets]
     ax.plot(center_of_borders, y, '--')
@@ -161,7 +177,7 @@ if __name__ == "__main__":
     fig.tight_layout()
 
     fig, ax = plt.subplots()
-    # ax.hist(sample_density, buckets_number, weights=np.ones(len(sample_density)) / len(sample_density), density=False, edgecolor='black', facecolor='blue')
+    # ax.hist(sample_elastic, buckets_number, weights=np.ones(len(sample_elastic)) / len(sample_elastic), density=False, edgecolor='black', facecolor='blue')
     center_of_borders = [(border[0] + border[1])/2 for border in borders]
     y = [len(bucket)/selection_size for bucket in buckets]
     # ax.plot(center_of_borders, y, '--')
@@ -181,7 +197,7 @@ if __name__ == "__main__":
     from statsmodels.distributions.empirical_distribution import ECDF
 
     fig, ax = plt.subplots()
-    ecdf = ECDF(sample_density)
+    ecdf = ECDF(sample_elastic)
     ax.set_xlabel('x')
     ax.set_ylabel('F(x)')
     ax.set_title('Эмпирическая функция распределения (по выборке)')
