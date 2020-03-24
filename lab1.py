@@ -8,6 +8,7 @@ Measurement = namedtuple("Measurement", ['density', 'elastic'])
 selection_size = 96 # объём выборочной совокупности
 data_file_name = "Tabl.txt"
 sample_seed = 120 # None to random # Зерно для выборки, константа, чтобы всегда одинаково
+sample_seed_2 = 721
 block_output_size = 15 # (c учётом, что на одну запись уходит 6 символов(с пробелом))
 
 def read_data(filename):
@@ -127,27 +128,55 @@ if __name__ == "__main__":
     from statistics import mean
     # Гистограммы
     fig, ax = plt.subplots()
-    ax.hist(sample_density, bins=buckets_number, density=False, edgecolor='black', facecolor='blue')
-    center_of_borders = [(border[0] + border[1])/2 for border in borders]
+    # ax.hist(sample_density, bins=buckets_number, density=False, edgecolor='black', facecolor='blue')
+    # ax.hist(sample_density, bins=buckets_number, density=False, edgecolor='black', facecolor='blue')
     y = [len(bucket) for bucket in buckets]
+    center_of_borders = [(border[0] + border[1])/2 for border in borders]
     ax.plot(center_of_borders, y, '--')
     ax.set_xlabel('Варианты')
     ax.set_ylabel('Абсолютная частота')
-    ax.set_title('Гистограмма и полигон абсолютных частот')
+    ax.set_title('Полигон абсолютных частот')
     fig.tight_layout()
-    plt.show()
+    # plt.show()
+    fig, ax = plt.subplots()
+    h = borders[0][1]-borders[0][0]
+    y_h = [val/h for val in y]
+    ax.bar(center_of_borders, y_h, h, edgecolor='black', color='b')
+    for i in range(len(center_of_borders)):
+        ax.text(center_of_borders[i], y_h[i], str(round(y_h[i], 4)), ha='center', color='b')
+    ax.set_xlabel('Варианты')
+    ax.set_ylabel('Абсолютная частота')
+    ax.set_title('Гистограмма абсолютных частот')
+    fig.tight_layout()
+    # plt.show()
 
     fig, ax = plt.subplots()
-    ax.hist(sample_density, buckets_number, weights=np.ones(len(sample_density)) / len(sample_density), density=False, edgecolor='black', facecolor='blue')
+    # ax.hist(sample_density, buckets_number, weights=np.ones(len(sample_density)) / len(sample_density), density=False, edgecolor='black', facecolor='blue')
     center_of_borders = [(border[0] + border[1])/2 for border in borders]
     y = [len(bucket)/selection_size for bucket in buckets]
     ax.plot(center_of_borders, y, '--')
     ax.set_xlabel('Варианты')
     ax.set_ylabel('Относительная частота')
-    ax.set_title('Гистограмма и полигон относительных частот')
+    ax.set_title('Полигон относительных частот')
+    fig.tight_layout()
+
+    fig, ax = plt.subplots()
+    # ax.hist(sample_density, buckets_number, weights=np.ones(len(sample_density)) / len(sample_density), density=False, edgecolor='black', facecolor='blue')
+    center_of_borders = [(border[0] + border[1])/2 for border in borders]
+    y = [len(bucket)/selection_size for bucket in buckets]
+    # ax.plot(center_of_borders, y, '--')
+    h = borders[0][1]-borders[0][0]
+    y_h = [val/h for val in y]
+    ax.bar(center_of_borders, y_h, h, edgecolor='black', color='b')
+    for i in range(len(center_of_borders)):
+        ax.text(center_of_borders[i], y_h[i], str(round(y_h[i], 4)), ha='center', color='b')
+    ax.set_xlabel('Варианты')
+    ax.set_ylabel('Относительная частота')
+    ax.set_title('Гистограмма относительных частот')
     fig.tight_layout()
     plt.show()
 
+    exit(12)
     # Эмпирическая функция распределения
     from statsmodels.distributions.empirical_distribution import ECDF
 

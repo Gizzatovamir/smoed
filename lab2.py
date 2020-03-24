@@ -90,10 +90,10 @@ if __name__ == "__main__":
     M4 = table[-1][6] / n
 
     print("\nНачальные выборочные моменты с 1 по 4:")
-    print("M1:{0:.4f}".format(M1))
-    print("M2:{0:.4f}".format(M2))
-    print("M3:{0:.4f}".format(M3))
-    print("M4:{0:.4f}".format(M4))
+    print("M1: {0:.4f}".format(M1))
+    print("M2: {0:.4f}".format(M2))
+    print("M3: {0:.4f}".format(M3))
+    print("M4: {0:.4f}".format(M4))
     print()
 
     m2 = (M2 - pow(M1,2)) * pow(h,2)
