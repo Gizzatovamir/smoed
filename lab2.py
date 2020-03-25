@@ -68,7 +68,7 @@ if __name__ == "__main__":
     # sample = lab1.get_sample(general_population, lab1.selection_size)
     sample_density = lab1.get_sample_first(general_population, lab1.selection_size)
     sample_elastic = lab1.get_sample_second(general_population, lab1.selection_size)
-    curr_sample = sample_elastic
+    curr_sample = sample_density
 
     borders, buckets = lab1.get_interval_sample(curr_sample)
     lab1.print_beautiful_interval_freq(buckets, borders)
@@ -77,8 +77,6 @@ if __name__ == "__main__":
     C = mid_borders[max([(len(bucket), i) for i, bucket in enumerate(buckets)])[1]]
     # h = mid_borders[1] - mid_borders[0]
     h = int((mid_borders[-1] - mid_borders[0]) / (len(mid_borders)-1)) #  вроде работает, на за счёт округление может быть шляпа
-    print("C =", C)
-    print("h =", h)
 
     table = build_table(curr_sample)
     for row in table:
@@ -86,6 +84,11 @@ if __name__ == "__main__":
             print("{0:.2f}".format(number), end=" ")
         print(end="\n")
     check_result(table)
+
+    C = build_table.C
+    h = build_table.h
+    print("C =", C)
+    print("h =", h)
 
     n = table[-1][1]
     M1 = table[-1][3] / n

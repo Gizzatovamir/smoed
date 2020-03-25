@@ -8,7 +8,7 @@ Measurement = namedtuple("Measurement", ['density', 'elastic'])
 selection_size = 96 # объём выборочной совокупности
 data_file_name = "Tabl.txt"
 sample_seed_1 = 120 # None to random # Зерно для выборки, константа, чтобы всегда одинаково
-sample_seed_2 = 721
+# sample_seed_2 = 721
 block_output_size = 15 # (c учётом, что на одну запись уходит 6 символов(с пробелом))
 
 def read_data(filename):
@@ -38,7 +38,7 @@ def get_sample_first(gen_pop, size_of_gen_pop):
 
 def get_sample_second(gen_pop, size_of_gen_pop):
     prev_state = random.getstate()
-    random.seed(sample_seed_2)
+    random.seed(sample_seed_1)
     sample = random.sample(gen_pop, size_of_gen_pop)
     random.setstate(prev_state)
     sample = [elem[1] for elem in sample]
