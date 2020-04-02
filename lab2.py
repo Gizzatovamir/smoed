@@ -68,7 +68,7 @@ if __name__ == "__main__":
     # sample = lab1.get_sample(general_population, lab1.selection_size)
     sample_density = lab1.get_sample_first(general_population, lab1.selection_size)
     sample_elastic = lab1.get_sample_second(general_population, lab1.selection_size)
-    curr_sample = sample_density
+    curr_sample = sample_elastic
 
     borders, buckets = lab1.get_interval_sample(curr_sample)
     lab1.print_beautiful_interval_freq(buckets, borders)
@@ -140,22 +140,22 @@ if __name__ == "__main__":
 # точечные статистические оценки математического ожидания, дисперсии, среднеквадратического отклонения,
 #  асимметрии и эксцесса исследуемой случайной величины. Полученные результаты содержательно проинтерпретировать.
 
-    variation_series_density = Counter(curr_sample)
+    # variation_series_density = Counter(curr_sample)
 
-    # Проосто считаем
+    # # Проосто считаем
 
-    math_expectation = 0
-    elems_num = 0
-    for key, value in variation_series_density.items():
-        math_expectation += key * value
-        elems_num += value
-    print(math_expectation, "/", elems_num)
-    math_expectation /= elems_num
-    print("Мат ождиание: {:.3f}".format(math_expectation))
+    # math_expectation = 0
+    # elems_num = 0
+    # for key, value in variation_series_density.items():
+    #     math_expectation += key * value
+    #     elems_num += value
+    # print(math_expectation, "/", elems_num)
+    # math_expectation /= elems_num
+    # print("Мат ождиание: {:.3f}".format(math_expectation))
 
 
-    dispersion = math.sqrt(sum([pow(xi - math_expectation, 2) for xi in curr_sample]) / (96 - 1))
-    print("Дисперсия: {:.3f}".format(dispersion))
+    # dispersion = math.sqrt(sum([pow(xi - math_expectation, 2) for xi in curr_sample]) / (96 - 1))
+    # print("Дисперсия: {:.3f}".format(dispersion))
 
 
 

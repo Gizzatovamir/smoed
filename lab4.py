@@ -8,8 +8,8 @@ def print_beauty(sample: list, size):
             print(end="\n")
 
 def check(value_1, value_2, border_1, border_2):
-    is_1_in_interval  = value_1 >= border_1[0] and value_1 < border_1[1]
-    is_2_in_interval = value_2 >= border_2[0] and value_2 < border_2[1]
+    is_1_in_interval  = value_1 >= border_1[0] and value_1 <= border_1[1]
+    is_2_in_interval = value_2 >= border_2[0] and value_2 <= border_2[1]
     return is_1_in_interval and is_2_in_interval
 
 def build_corr_table(sample_2D, borders_1, borders_2):
@@ -104,7 +104,7 @@ if __name__ == "__main__":
     print('v: Среднее: {0:.3f}, СКО: {1:.3f}'.format(mean_v, S_v))
     print(end="\n")
 
-    sum_from_table = countSum(table)
+    sum_from_table = countSum(table, v, u)
     print(sum_from_table)
     # коэффициент корреляции Пирсона
     r = (sum_from_table + n * mean_v * mean_u) / (n * S_v * S_u)
