@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import copy
 import lab1
 
-K_num = 5
+K_num = 6
 
 def calcFirstCenters(sameple):
     # Прикидываем центры для начала работы
@@ -64,12 +64,11 @@ def compareClusters(clusters_1, clusters_2):
     if len(clusters_1) != len(clusters_2):
         return False
     for i in range(K_num):
-        if len(clusters_1[i]) == len(clusters_2[i]):
-            for j in range(len(clusters_2[i])):
-                if clusters_1[i][j] != clusters_2[i][j]:
-                    return False
-        else:
+        if len(clusters_1[i]) != len(clusters_2[i]):
             return False
+        for j in range(len(clusters_2[i])):
+            if clusters_1[i][j] != clusters_2[i][j]:
+                return False
     return True
 
 def F_1(clusters, centers):
@@ -106,14 +105,14 @@ def k_algo_1(sample_density, sample_elastic):
     print(end="\n")
     old_clusters = []
 
-    for i in range(10):
+    for i in range(20):
         for point in pointsPull:
             index = findClosestCluster(point, centers)
             clusters[index].append(point)
             recalcClusterCenter(clusters[index], index, centers)
         pointsPull = list(zip(sample_density, sample_elastic))
 
-        if compareClusters(clusters, old_clusters):
+        if i == 19:
             print("Найдено устойчивое состояние! {0} совпадает с {1}".format(i, i+1))
 
             colors = ["blue", "red", "yellow", "black", "green", "cyan", "grey", "blue", "red", "yellow"]
@@ -192,6 +191,13 @@ n = lab1.selection_size
 general_population = lab1.read_data(filename=lab1.data_file_name)
 sample_density = lab1.get_sample_first(general_population, n)
 sample_elastic = lab1.get_sample_second(general_population, n)
+n = 98
+
+sample_density = [480, 393, 482, 408, 542, 486, 405, 452, 483, 465, 474, 359, 487, 473, 510, 442, 569, 331, 437, 421, 484, 504, 440, 390, 490, 443, 532, 522, 426, 411, 484, 467, 453, 496, 344, 443, 423, 463, 396, 421, 330, 547, 482, 514, 472, 545, 386, 463, 415, 461, 386, 468, 362, 433, 438, 560, 393, 525, 453, 396, 434, 508, 463, 340, 321, 488, 566, 514, 593, 412, 403, 412, 320, 503, 391, 434, 468, 523, 351, 505, 502, 406, 518, 437, 506, 449, 547, 402, 399, 440, 392, 416, 481, 395, 500, 465, 496, 462]
+sample_elastic = [153.30, 122.80, 136.40, 110.00, 146.10, 139.40, 103.60, 140.50, 143.40, 127.70, 132.50, 71.900, 146.00, 136.40, 129.40, 115.40, 157.40, 74.100, 124.30, 124.20, 140.40, 143.80, 128.50, 108.10, 139.90, 135.70, 158.70, 154.50, 119.00, 112.90, 147.50, 113.00, 119.50, 143.10, 86.800, 122.90, 131.10, 129.20, 90.100, 118.00, 71.100, 154.70, 139.90, 153.60, 134.20, 145.30, 105.80, 121.20, 119.70, 138.60,95.500, 128.90, 97.900, 128.20, 134.10, 169.80, 103.20, 156.50, 124.20, 83.800, 122.30, 159.00, 136.70, 85.100, 86.100, 134.10, 175.70, 174.60, 187.40, 127.80, 123.90, 116.30, 64.500, 148.50, 107.50, 108.70, 144.90, 148.70, 89.000, 155.80, 132.50, 113.80, 154.00, 121.80, 158.40, 124.50, 164.40, 120.80, 100.00, 126.70, 82.700, 120.50, 148.30, 109.10, 155.50, 140.90, 141.70, 138.80]
+n = len(sample_density)
+print(len(sample_density) == len(sample_elastic))
+print(len(sample_elastic))
 
 min_elem_x, max_elem_x = min(sample_density), max(sample_density)
 min_elem_y, max_elem_y = min(sample_elastic), max(sample_elastic)
