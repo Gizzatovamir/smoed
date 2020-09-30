@@ -104,17 +104,26 @@ def makeClusters(data1, data2, R):
         clusters.append(points_in_cluster)
     return clusters
 
+def createColorGenerator():
+    colors = ["red", "blue", "black", "green", "cyan", "grey", "magenta", "yellow", "lime"]
+    i = 0
+    while (True):
+        yield colors[i]
+        i += 1
+        if i == len(colors):
+            i = 0
+
 def plotClusters(clusters, clusterMeans, R):
     ax = plt.axes(aspect='equal')
+    colors = createColorGenerator()
     for i, cluster in enumerate(clusters):
         x, y = list(zip(*cluster))
-        color = np.random.rand(3,)
-        color[0] = (color[0]*255 % 192) / 255
-        plt.scatter(x, y, marker=".", color=color, alpha=0.5)
-        ax.add_artist(plt.Circle(clusterMeans[i], R, color=color, alpha=0.1))
+        clusterColor = next(colors)
+        plt.scatter(x, y, marker=".", color=clusterColor, alpha=0.5)
+        ax.add_artist(plt.Circle(clusterMeans[i], R, color=clusterColor, alpha=0.1))
         xs = [mean[0] for mean in clusterMeans]
         ys = [mean[1] for mean in clusterMeans]
-    plt.scatter(xs, ys, color = 'r', marker='o')
+        plt.scatter(xs[i], ys[i], color = clusterColor, marker='o')
     plt.show()
 
 
@@ -154,7 +163,7 @@ if __name__ == '__main__':
     # exit(0)
 
     old_clusters = [] 
-    for R in np.linspace(minR, maxR, 500): # 68 400 200
+    for R in np.linspace(minR, maxR, 143): # 68 400 200
         clusters = makeClusters(sample_density, sample_elastic, R)
         centers = [recalcClusterCenter(cluster) for cluster in clusters]
         print("Clusters num: {0}".format(len(clusters)))
@@ -163,7 +172,7 @@ if __name__ == '__main__':
         print("F3: {:.2f}".format(F_3(clusters, centers)))
         print("\n")
         if compareClusters(clusters, old_clusters):
-        # if len(clusters) == 6:
+        # if len(clusters) == 5:
             # Устойчивое!
             print("success! ", R)
             print(sorted(centers))
